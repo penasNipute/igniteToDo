@@ -97,8 +97,20 @@ app.patch('/todos/:id/done', checksExistsUserAccount, checksExistsTodo, (request
   return response.status(200).json({message:"todo updated!"})
 });
 
-app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+app.delete('/todos/:id', checksExistsUserAccount,checksExistsTodo, (request, response) => {
+  const { user, todo } =request
+  
+  const indexOfTodo = user.todos.findIndex( indexTodo => indexTodo.id === todo.id )
+
+  console.log(indexOfTodo)
+
+  if(indexOfTodo === -1){
+    return response.status(404).json({ error: "Todo not found" });
+  }
+
+  user.todos.splice(indexOfTodo, 1);
+
+  return response.status(200).json({message:"Todo deleted"})
 });
 
 module.exports = app;
